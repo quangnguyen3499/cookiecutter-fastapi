@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: "{{ cookiecutter.project_slug }}_pg13_prod"
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=db
+    volumes:
+      - ./db_data/postgres/db-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+
+  app:
+    container_name: "{{ cookiecutter.project_slug }}_app_prod"
+    image: "{{ cookiecutter.project_slug }}_app_test:v1"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=db
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/src
+    ports:
+      - "8001:8000"
+    command: bash ./scripts/start-dev.sh

@@ -1,0 +1,64 @@
+version: '3.7'
+
+x-params: &app-params
+  restart: on-failure
+  environment:
+    OPENAI_API_VERSION: 2024-02-15-preview
+    POSTGRES_USER: ${POSTGRES_USER:-postgres}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    POSTGRES_DB: ${POSTGRES_DB:-database}
+    DATABASE_HOST: ${POSTGRES_HOST:-db}
+    DATABASE_PORT: ${POSTGRES_PORT:-5432}
+    CELERY_BROKER_HOST: ${REDIS_HOST:-redis}
+    CELERY_BROKER_PORT: ${REDIS_PORT:-6379}
+  volumes:
+    - ./:/src
+  env_file:
+    - .env
+  build:
+    context: .
+    dockerfile: ./Dockerfile
+  image: "{{ cookiecutter.project_slug }}_app"
+
+
+services:
+  db:
+    container_name: "{{ cookiecutter.project_slug }}_pg13"
+    image: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${POSTGRES_DB:-database}
+    volumes:
+      - ./db_data/postgres/db-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+    ports:
+      - "5435:5432"
+
+  app:
+    container_name: "{{ cookiecutter.project_slug }}_app"
+    <<: *app-params
+    ports:
+      - "8000:8000"
+    command: bash ./scripts/start-dev.sh
+
+  redis:
+    container_name: "{{ cookiecutter.project_slug }}_redis"
+    image: redis:7.0.5
+    restart: always
+    ports:
+      - "6379:6379"
+
+  worker:
+    container_name: "{{ cookiecutter.project_slug }}_celery_worker"
+    <<: *app-params
+    command: ["sh", "scripts/celery_worker.sh"]
+
+  scheduler:
+    container_name: "{{ cookiecutter.project_slug }}_celery_scheduler"
+    <<: *app-params
+    command: ["sh", "scripts/celery_beat.sh"]

@@ -1,0 +1,75 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: "{{ cookiecutter.project_slug }}_pg13_prod"
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${POSTGRES_DB:-database}
+    volumes:
+      - ./db_data/postgres/db-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+    ports:
+      - 5435:5432
+
+  app:
+    container_name: "{{ cookiecutter.project_slug }}_app_prod"
+    image: "{{ cookiecutter.project_slug }}_app"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${POSTGRES_DB:-database}
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ./:/src
+    ports:
+      - "16000:8000"
+    command: bash ./scripts/start-prod.sh
+
+  redis:
+    container_name: "{{ cookiecutter.project_slug }}_redis_prod"
+    image: redis:7.0.5
+    ports:
+      - "6379:6379"
+
+  worker:
+    container_name: "{{ cookiecutter.project_slug }}_celery_worker_prod"
+    build:
+      context: .
+      dockerfile: ./Dockerfile.prod
+    image: "{{ cookiecutter.project_slug }}_app"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=${POSTGRES_HOST:-db}
+      - DATABASE_PORT=${POSTGRES_PORT:-5432}
+      - CELERY_BROKER_HOST=${REDIS_HOST:-redis}
+      - CELERY_BROKER_PORT=${REDIS_PORT:-6379}
+    volumes:
+      - ./:/src
+    command: ["sh", "scripts/celery_worker.sh"]
+
+  scheduler:
+    container_name: "{{ cookiecutter.project_slug }}_celery_scheduler_prod"
+    build:
+      context: .
+      dockerfile: ./Dockerfile.prod
+    image: "{{ cookiecutter.project_slug }}_app"
+    depends_on:
+      - worker
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=${POSTGRES_HOST:-db}
+      - DATABASE_PORT=${POSTGRES_PORT:-5432}
+      - CELERY_BROKER_HOST=${REDIS_HOST:-redis}
+      - CELERY_BROKER_PORT=${REDIS_PORT:-6379}
+    volumes:
+      - ./:/src
+    command: ["sh", "scripts/celery_beat.sh"]

@@ -1,0 +1,39 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Creating env...
+      - cp .env.example .env
+      - echo Replacing docker image by aws library for docker image...
+      - |
+        if [ ${BRANCH} = "dev" ]; then
+          sed -i 's/FROM /FROM public.ecr.aws\/docker\/library\//g' Dockerfile
+        fi
+      - |
+        if [ ${BRANCH} = "main" ]; then
+          sed -i 's/FROM /FROM public.ecr.aws\/docker\/library\//g' Dockerfile.prod
+        fi
+  build:
+    commands:
+      - echo Building the Docker image...
+      - |
+        if [ ${BRANCH} = "dev" ]; then
+          docker-compose -f docker-compose.yml build app
+        fi
+      - |
+        if [ ${BRANCH} = "main" ]; then
+          docker-compose -f docker-compose.prod.yml build app
+        fi
+      - docker tag ${APP_CONTAINER_NAME}:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_ECR_REPO_NAME}:latest
+      - echo Exporting task definition file...
+      - printf '[{"name":"%s","imageUri":"%s"}]' ${APP_ECS_CONTAINER_NAME} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_ECR_REPO_NAME}:latest > task-definition.json
+  post_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+      - echo Pushing the Docker image...
+      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_ECR_REPO_NAME}:latest
+artifacts:
+  files:
+    - "task-definition.json"
