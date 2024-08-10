@@ -3,7 +3,6 @@ version: '3.7'
 x-params: &app-params
   restart: on-failure
   environment:
-    OPENAI_API_VERSION: 2024-02-15-preview
     POSTGRES_USER: ${POSTGRES_USER:-postgres}
     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     POSTGRES_DB: ${POSTGRES_DB:-database}

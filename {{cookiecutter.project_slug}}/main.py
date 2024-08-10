@@ -5,21 +5,14 @@ from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi import status
 from fastapi.exception_handlers import http_exception_handler
-from langfuse.callback import CallbackHandler as LangfuseCallbackHandler
-from langserve import add_routes
 from starlette.middleware.cors import CORSMiddleware
 
 from configs.common_config import settings
 from configs.database import HealthcheckModel
 from core.exception_handlers import chatbot_exception_error_handler
-from core.exception_handlers import openai_request_error_handler
-from core.exception_handlers import openai_timeout_error_handler
 from core.exception_handlers import unexpected_exception_handler
 from core.exceptions import ChatbotException
 from core.exceptions import CustomBaseException
-from core.exceptions import OpenAIException
-from core.exceptions import OpenAITimeoutException
-from core.helpers.vector_store_helper import chain
 
 load_dotenv()
 
@@ -45,18 +38,8 @@ app.add_exception_handler(CustomBaseException, unexpected_exception_handler)
 
 # Chatbot exception handler
 app.add_exception_handler(ChatbotException, chatbot_exception_error_handler)
-app.add_exception_handler(OpenAITimeoutException, openai_timeout_error_handler)
-app.add_exception_handler(OpenAIException, openai_request_error_handler)
 
-
-langfuse_handler = LangfuseCallbackHandler(
-    public_key=os.environ["LANGFUSE_PUBLIC_KEY"],
-    secret_key=os.environ["LANGFUSE_SECRET_KEY"],
-    host=os.environ["LANGFUSE_HOST"],
-)
-
-# Edit this to add the chain you want to add
-add_routes(app, chain, path="/chat", playground_type="chat")
+add_routes(app, path="/chat", playground_type="chat")
 
 
 @app.get(

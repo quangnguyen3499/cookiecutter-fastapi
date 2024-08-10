@@ -1,6 +1,5 @@
 import json
 
-import openai
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 from starlette.requests import Request
@@ -18,33 +17,6 @@ def unexpected_exception_handler(request: Request, exc: CustomBaseException) -> 
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": jsonable_encoder(exc.detail)},
-    )
-
-
-def openai_request_error_handler(request: Request = None, exc: openai.OpenAIError = None) -> str:
-    return json.dumps(
-        [
-            AIResponse(
-                type=MessageType.ERROR.value,
-                content=ERROR_RESPONSE,
-                code=status.HTTP_502_BAD_GATEWAY,
-            ).model_dump(),
-        ],
-    )
-
-
-def openai_timeout_error_handler(
-    request: Request = None,
-    exc: openai.APITimeoutError = None,
-) -> str:
-    return json.dumps(
-        [
-            AIResponse(
-                type=MessageType.ERROR.value,
-                content=ERROR_TIMEOUT_RESPONSE,
-                code=status.HTTP_504_GATEWAY_TIMEOUT,
-            ).model_dump(),
-        ],
     )
 
 

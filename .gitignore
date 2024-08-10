@@ -115,35 +115,6 @@ backup.dump
 backup.dump.gz
 .vscode
 
-# AI
-/vectorstore/chroma/expert_db/*
-/vectorstore/chroma/details_expert_db/*
-/vectorstore/chroma/stage_example_db/*
-!/vectorstore/chroma/expert_db/.gitkeep
-!/vectorstore/chroma/details_expert_db/.gitkeep
-!/vectorstore/chroma/stage_example_db/.gitkeep
-
-# Prompts
-{{ cookiecutter.project_slug }}/configs/ai_configs/prompts/dev/
-{{ cookiecutter.project_slug }}/configs/ai_configs/prompts/good/
-{{ cookiecutter.project_slug }}/configs/ai_configs/prompts/old/
-{{ cookiecutter.project_slug }}/configs/ai_configs/prompts/testing/
-{{ cookiecutter.project_slug }}/configs/ai_configs/prompts/unstable/
-{{ cookiecutter.project_slug }}/configs/ai_configs/support_prompts/dev/
-{{ cookiecutter.project_slug }}/configs/ai_configs/support_prompts/good/
-# configs/ai_configs/db_vectorize/*
-{{ cookiecutter.project_slug }}/configs/ai_configs/router_prompts/dev/
-{{ cookiecutter.project_slug }}/configs/ai_configs/router_prompts/good/
-# configs/ai_configs/utterance_examples/*
-# configs/ai_configs/acronyms/*
-
-!{{ cookiecutter.project_slug }}/configs/ai_configs/prompts/.gitkeep
-!{{ cookiecutter.project_slug }}/configs/ai_configs/support_prompts/.gitkeep
-!{{ cookiecutter.project_slug }}/configs/ai_configs/db_vectorize/.gitkeep
-!{{ cookiecutter.project_slug }}/configs/ai_configs/router_prompts/.gitkeep
-!{{ cookiecutter.project_slug }}/configs/ai_configs/utterance_examples/.gitkeep
-!{{ cookiecutter.project_slug }}/configs/ai_configs/acronyms/.gitkeep
-
 # Wandb
 wandb/
 
@@ -173,3 +144,6 @@ terraform/
 
 # Log
 *.log.*
+
+# MacOS
+.zshrc

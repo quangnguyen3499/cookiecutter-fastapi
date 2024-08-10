@@ -17,16 +17,6 @@ class ChatbotException(HTTPException):
         super().__init__(status_code=self.status_code, detail=self.detail, **kwargs)
 
 
-class OpenAITimeoutException(ChatbotException):
-    status_code = status.HTTP_504_GATEWAY_TIMEOUT
-    detail = "OpenAI API Request timed out"
-
-
-class OpenAIException(ChatbotException):
-    status_code = status.HTTP_502_BAD_GATEWAY
-    detail = "OpenAI API Server error"
-
-
 class CustomBaseException(Exception):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     detail = "Server Error"

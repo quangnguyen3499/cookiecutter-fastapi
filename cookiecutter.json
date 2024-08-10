@@ -1,0 +1,29 @@
+{
+  "project_name": "My FastAPI",
+  "project_slug": "{{ cookiecutter.project_name.lower()|replace(' ', '_')|replace('-', '_')|replace('.', '_')|trim() }}",
+  "author": "STS AI Team",
+  "email": "{{ cookiecutter.author.lower()|replace(' ', '.') }}@example.com",
+  "short_description": "My awesome FastAPI Project",
+  "version": "0.1.0",
+  "use_database": [
+    "Yes",
+    "No"
+  ],
+  "docker_registry": "docker.io",
+  "ci_tool": [
+    "GitHub",
+    "GitLab",
+    "Bitbucket",
+    "Codecommit",
+    "None"
+  ],
+  "python_version": [
+    "3.12",
+    "3.11",
+    "3.10"
+  ],
+  "use_vectorstore": [
+    "Yes",
+    "No"
+  ]
+}
