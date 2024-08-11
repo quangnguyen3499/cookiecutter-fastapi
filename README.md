@@ -95,9 +95,8 @@ Application components are::
     ├-- nginx
     ├-- resources
     ├── scripts                         - scripts
-    │   │   ├── database                - database scripts
-    │   │   │   └── backup              - backup
-    │   │   │   ├── restore             - restore from backup
+    │   │   ├── database_backup         - database script backup
+    │   │   ├── database_restore        - database script restore from backup
     │   │   ├── celery_beat.sh          - run celery scheduler
     │   │   ├── celery_worker.sh        - run celery worker
     │   │   ├── format
@@ -112,9 +111,11 @@ Application components are::
     │   └── ...
     ├── README.md                       - documentation
     ├── .env.example
+    ├── .gitlab-ci.yml                  - CI/CD for Gitlab
+    ├── bitbucket-pipelines.yml         - CI/CD for Bitbucket
+    ├── buildspec.yml                   - CI/CD for AWS CodeCommit
     ├── alembic.ini
     ├── .pre-commit-config.yaml
-    ├── buildspec.yml                   - CI/CD for deployment on ECS
     ├── logging.ini
     ├── logging_prod.ini
     ├── main.py
