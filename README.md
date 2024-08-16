@@ -1,10 +1,14 @@
 FastAPI Cookiecutter Template
 =============================
 
+## !Important TODO:
+- Add decorator method class
+- Refactor SQLAlchemy
+
 Introduction
 ------------
 
-This projects consist of a `cookiecutter`_ template that generates a full structure
+This projects consist of a `cookiecutter` template that generates a full structure
 for creating a RESTful API service project based on FastAPI following the MVC
 (Model-View-Controller) structure.
 
@@ -14,7 +18,7 @@ complete file and folder structure to quickly start to code your project.
 Prerequisites
 -------------
 
-It uses ``Python`` (>=3.10) behind the scenes. Please install the Python package `cookiecutter`_ before using it.
+It uses ``Python`` (>=3.10) behind the scenes. Please install the Python package `cookiecutter` before using it.
 
 Project Generation Options
 --------------------------
