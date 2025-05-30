@@ -34,7 +34,7 @@ services:
 
   redis:
     container_name: "{{ cookiecutter.project_slug }}_redis_prod"
-    image: redis:8.0.0
+    image: redis:8.0.2
     ports:
       - "6379:6379"
 
