@@ -3,7 +3,7 @@ version: '3.7'
 services:
   db:
     container_name: "{{ cookiecutter.project_slug }}_pg13_prod"
-    image: postgres:17
+    image: postgres:18
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1
