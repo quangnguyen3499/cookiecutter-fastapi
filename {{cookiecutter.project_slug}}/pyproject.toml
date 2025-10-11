@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic = "^2.7.4"
-fastapi = "^0.118.0"
+fastapi = "^0.119.0"
 python-dotenv = "^1.0.1"
 sse-starlette = "^3.0.0"
 pytest-cov = "^7.0.0"
